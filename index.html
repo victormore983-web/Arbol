@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creador Vic❤️Persi</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: #ffffff;
+            touch-action: manipulation;
+        }
+
+        /* Pantalla de Bloqueo */
+        #lock-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: #ff8fa3;
+            text-align: center;
+        }
+
+        .lock-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid #ffb3c1;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ffb3c1;
+            background: #fff;
+            color: #333;
+            margin-top: 15px;
+            text-align: center;
+            outline: none;
+        }
+
+        .btn-acceso {
+            background: #ffb3c1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .btn-permiso {
+            display: block;
+            margin-top: 20px;
+            color: #25d366;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Estilos del Árbol y Contenido */
+        #content { display: block; position: relative; width: 100vw; height: 100vh; }
+        
+        #main-title {
+            position: absolute; top: 15%; width: 100%; text-align: center;
+            color: #ff8fa3; font-size: 3rem; font-weight: bold;
+            z-index: 3; pointer-events: none; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        
+        canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
+        #text-container { position: absolute; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+        
+        .frase {
+            position: absolute; 
+            color: #ff8fa3; 
+            font-size: 1.6rem; 
+            font-weight: bold;
+            animation: fadeInOut 3.5s linear forwards;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+            white-space: nowrap;
+        }
+        @keyframes fadeInOut { 
+            0% { opacity: 0; transform: translateY(20px); } 
+            15% { opacity: 1; } 
+            85% { opacity: 1; } 
+            100% { opacity: 0; transform: translateY(-20px); } 
+        }
+        
+        .ws-btn { position: absolute; bottom: 20px; right: 20px; background: #25d366; color: white; padding: 12px 20px; border-radius: 50px; text-decoration: none; z-index: 10; font-weight: bold; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
+        .music-ctrl { position: absolute; bottom: 20px; left: 20px; z-index: 10; background: rgba(255, 143, 163, 0.1); border: 1px solid #ff8fa3; color: #ff8fa3; padding: 10px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div id="lock-screen">
+        <div class="lock-card">
+            <h2>Acceso Restringido</h2>
+            <p>Necesitas una clave para volver a ver esto.</p>
+            <input type="password" id="passInput" placeholder="Introduce la clave">
+            <br>
+            <button class="btn-acceso" onclick="verificarClave()">Entrar</button>
+            <a class="btn-permiso" onclick="pedirPermiso()">Pedir clave por WhatsApp</a>
+        </div>
+    </div>
+
+    <div id="content" onclick="intentarReproducirMusica()">
+        <h1 id="main-title">¡Creador Vic Persi!</h1>
+        <div id="text-container"></div>
+        <canvas id="canvas"></canvas>
+        <a href="https://wa.me/?text=Hola!%20Me%20encantó%20el%20detalle" class="ws-btn" target="_blank">¡Tengo algo que decirte! 💌</a>
+        <button class="music-ctrl" onclick="toggleMusic(event)">🎵 Música: On/Off</button>
+        <audio id="bgMusic" loop>
+            <source src="amor.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        // --- CONFIGURACIÓN INICIAL ---
+        const CLAVE_MAESTRA = "persi2026"; 
+        const lockScreen = document.getElementById('lock-screen');
+        const content = document.getElementById('content');
+        const audio = document.getElementById('bgMusic');
+        let musicaIniciada = false;
+
+        // --- SISTEMA DE BLOQUEO ---
+        if (localStorage.getItem('visto') === 'true') {
+            lockScreen.style.display = 'flex';
+            content.style.display = 'none';
+        } else {
+            localStorage.setItem('visto', 'true');
+        }
+
+        function verificarClave() {
+            const input = document.getElementById('passInput').value;
+            if (input === CLAVE_MAESTRA) {
+                lockScreen.style.display = 'none';
+                content.style.display = 'block';
+                intentarReproducirMusica(); // Intenta sonar al desbloquear
+            } else {
+                alert("Clave incorrecta.");
+            }
+        }
+
+        function pedirPermiso() {
+            window.open("https://wa.me/qr/GEELF4EW2PWRL1");
+        }
+
+        // --- LÓGICA DE AUDIO (Inicia al tocar) ---
+        function intentarReproducirMusica() {
+            if (!musicaIniciada) {
+                audio.play().then(() => {
+                    musicaIniciada = true;
+                }).catch(e => console.log("Esperando interacción..."));
+            }
+        }
+
+        function toggleMusic(event) {
+            event.stopPropagation(); // Evita que el clic del botón active el onclick del contenedor
+            if (audio.paused) {
+                audio.play();
+                musicaIniciada = true;
+            } else {
+                audio.pause();
+            }
+        }
+
+        // Detectar primer toque en cualquier parte para navegadores estrictos
+        document.body.addEventListener('click', intentarReproducirMusica, { once: true });
+        document.body.addEventListener('touchstart', intentarReproducirMusica, { once: true });
+
+        // --- LÓGICA DEL ÁRBOL ---
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const textContainer = document.getElementById('text-container');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        let mouse = { x: null, y: null };
+        const particles = [];
+        const phrases = ["Eres mi favorita", "Te amo", "Gracias por estar", "Eres increíble", "Mi lugar feliz", "Cada día más", "Eres mi sol", "Mi niña linda"];
+
+        class Particle {
+            constructor() { this.reset(true); }
+            reset(initial = false) {
+                this.x = Math.random() * canvas.width;
+                this.y = initial ? Math.random() * canvas.height : -20; 
+                this.size = Math.random() * 12 + 5;
+                this.speed = Math.random() * 3 + 2; 
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 5 - 2.5;
+            }
+            update() {
+                this.y += this.speed;
+                this.angle += this.spin;
+                let dx = mouse.x - this.x; let dy = mouse.y - this.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < 100) { this.x -= dx / 20; this.y -= dy / 20; }
+                if (this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle * Math.PI / 180);
+                ctx.fillStyle = "#ff0000"; ctx.font = `${this.size}px Arial`;
+                ctx.fillText("❤", 0, 0); ctx.restore();
+            }
+        }
+
+        function init() { for (let i = 0; i < 70; i++) { particles.push(new Particle()); } }
+
+        function drawTree(startX, startY, len, angle, branchWidth) {
+            ctx.beginPath(); ctx.save(); 
+            ctx.strokeStyle = "#5d4037";
+            ctx.lineWidth = branchWidth;
+            ctx.translate(startX, startY); ctx.rotate(angle * Math.PI / 180);
+            ctx.moveTo(0, 0); ctx.lineTo(0, -len); ctx.stroke();
+            if (len < 10) {
+                ctx.fillStyle = "#ff0000"; ctx.font = "12px Arial"; ctx.fillText("❤", 0, -len);
+                ctx.restore(); return;
+            }
+            drawTree(0, -len, len * 0.75, angle - 22, branchWidth * 0.7);
+            drawTree(0, -len, len * 0.75, angle + 22, branchWidth * 0.7);
+            ctx.restore();
+        }
+
+        function createPhrase() {
+            if(content.style.display === 'none') return;
+            const frase = document.createElement('div');
+            frase.className = 'frase';
+            frase.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+            frase.style.left = Math.random() * 70 + 10 + "%";
+            frase.style.top = Math.random() * 60 + 20 + "%";
+            textContainer.appendChild(frase);
+            setTimeout(() => { frase.remove(); }, 3500);
+        }
+        setInterval(createPhrase, 1500);
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawTree(canvas.width / 2, canvas.height - 80, 110, 0, 10);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        
+        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+        init(); animate();
+        window.addEventListener('resize', () => { 
+            canvas.width = window.innerWidth; 
+            canvas.height = window.innerHeight; 
+        });
+    </script>
+</body>
+</html>
+Puedes Agg mi numero de WhatsApp cunado puedan permiso 
